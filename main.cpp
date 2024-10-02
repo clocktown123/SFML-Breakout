@@ -37,7 +37,7 @@ public:
 	}
 
 	//sets the brick to dead
-	void killBrick() {
+	bool killBrick() {
 		Dead = true;
 		shape.setFillColor(Color::Transparent); // make the brick invisible
 	}
@@ -53,6 +53,21 @@ public:
 		return false;
 	}// end collision function
 
+	float getX() {
+		return xpos;
+	}
+
+	float getY() {
+		return ypos;
+	}
+
+	float getW() {
+		return width;
+	}
+
+	float getH() {
+		return height;
+	}
 
 
 };// end of class brick!
@@ -63,14 +78,16 @@ private:
 	int BX;
 	int BY;
 	int xvel;
+	int yvel;
 	int radius;
 	CircleShape shape;
 
 public:
-	Ball(float bx, float by, float xv, float r) {
+	Ball(float bx, float by, float xv, float yv, float r) {
 		BX = bx;
 		BY = by;
 		xvel = xv;
+		yvel = yv;
 		radius = r;
 
 		//set up shape
@@ -81,14 +98,31 @@ public:
 	}
 
 	//moves the ball and handles boundary collision
-	//void move(float windoWidth, float windowHeight) {
-		//BX += xvel;
-
+	void move(float windowWidth, float windowHeight) {
+		BX += xvel;
+		BY += yvel;
+		shape.setPosition(BX, BY);
 		//check for collision with the left and right side of the window
-		//if (BX <= 0 || BX + radius * 2 >= windowWidth) {
-			//xvel = -xvel;
-		//}
-	//}
+		if (BX <= 0 || BX + radius * 2 >= windowWidth) {
+			xvel = -xvel;
+		}
+		if (BY <= 0 || BY + radius * 2 >= windowHeight) {
+			yvel = -yvel;
+		}
+	}
+
+	bool brickCollision(Brick& brick) {
+		if (!brick.killBrick() && //ensure the brick is not dead
+			BX + radius > brick.getX() &&
+			BX - radius < brick.getX() + brick.getW() &&
+			BY + radius > brick.getY() &&
+			BY - radius < brick.getY() + brick.getH()) {
+			brick.killBrick();
+			reflect(); //reflect the ball vertically
+			return true;
+		}
+		return false;
+	}
 
 	void draw(RenderWindow& window) {
 		window.draw(shape);
@@ -144,7 +178,7 @@ int main() {
 
 	//instiantate game objects
 
-	Ball ball1( 400, 400, 5, 10);
+	Ball ball1( 400, 400, 1, 1, 10);
 
 	Paddle paddle1(350, 700, 100, 20, 1);
 
@@ -203,8 +237,11 @@ int main() {
 			paddle1.moveRight();
 		}
 
+		ball1.move(800, 800);
 
 		window.clear(); //clrear screen
+
+		
 
 		brick1.draw(window);
 		brick2.draw(window);
