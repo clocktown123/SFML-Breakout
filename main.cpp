@@ -1,5 +1,7 @@
 #include <SFML/Graphics.hpp>
 //#include "Brick.h"
+#include<iostream>
+using namespace std;
 using namespace sf;
 
 
@@ -14,6 +16,7 @@ private:
 	RectangleShape shape;
 
 public:
+	
 	Brick(float x, float y, float w, float h) {
 		xpos = x;
 		ypos = y;
@@ -40,18 +43,19 @@ public:
 	bool killBrick() {
 		Dead = true;
 		shape.setFillColor(Color::Transparent); // make the brick invisible
+		return true;
 	}
 
 	// checks collision with the ball using class variables
-	bool checkCollision(float ballX, float ballY, float ballRadius) {
-		if (!Dead &&
-			ballX + ballRadius > xpos && ballX - ballRadius < xpos + width &&
-			ballY + ballRadius > ypos && ballY - ballRadius < ypos + height) {
-			killBrick();
-			return true;
-		}
-		return false;
-	}// end collision function
+	//bool checkCollision(float ballX, float ballY, float ballRadius) {
+		//if (!Dead &&
+			//ballX + ballRadius > xpos && ballX - ballRadius < xpos + width &&
+			//ballY + ballRadius > ypos && ballY - ballRadius < ypos + height) {
+			//killBrick();
+			//return true;
+		//}
+		//return false;
+	//}// end collision function
 
 	float getX() {
 		return xpos;
@@ -68,17 +72,19 @@ public:
 	float getH() {
 		return height;
 	}
-
+	float getDead() {
+		return Dead;
+	}
 
 };// end of class brick!
 
 
 class Ball {
 private:
-	int BX;
-	int BY;
-	int xvel;
-	int yvel;
+	float BX;
+	float BY;
+	float xvel;
+	float yvel;
 	int radius;
 	CircleShape shape;
 
@@ -112,13 +118,15 @@ public:
 	}
 
 	bool brickCollision(Brick& brick) {
-		if (!brick.killBrick() && //ensure the brick is not dead
+		if (!brick.getDead() && //ensure the brick is not dead
 			BX + radius > brick.getX() &&
-			BX - radius < brick.getX() + brick.getW() &&
+			BX - radius < brick.getX() + 50 &&
 			BY + radius > brick.getY() &&
-			BY - radius < brick.getY() + brick.getH()) {
+			BY - radius < brick.getY() + 50) {
 			brick.killBrick();
-			reflect(); //reflect the ball vertically
+			cout << "killed yo birck" << endl;
+			yvel *= -1;
+			//reflect(); //reflect the ball vertically
 			return true;
 		}
 		return false;
@@ -178,7 +186,7 @@ int main() {
 
 	//instiantate game objects
 
-	Ball ball1( 400, 400, 1, 1, 10);
+	Ball ball1( 200, 400, .8, 1, 10);
 
 	Paddle paddle1(350, 700, 100, 20, 1);
 
@@ -238,6 +246,10 @@ int main() {
 		}
 
 		ball1.move(800, 800);
+
+		ball1.brickCollision(brick1);
+		ball1.brickCollision(brick2);
+		ball1.brickCollision(brick3);
 
 		window.clear(); //clrear screen
 
