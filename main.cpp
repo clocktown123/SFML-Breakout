@@ -79,6 +79,66 @@ public:
 };// end of class brick!
 
 
+
+
+class Paddle {
+private:
+	float PX;
+	float PY;
+	float PW;
+	float PH;
+	float Speed;
+	RectangleShape shape;
+
+public:
+	Paddle(float px, float py, float pw, float ph, float sp) {
+		PX = px;
+		PY = py;
+		PW = pw;
+		PH = ph;
+		Speed = sp;
+
+		//set up shape
+		shape.setSize(Vector2f(PW, PH));
+		shape.setPosition(PX, PY);
+		shape.setFillColor(Color::White);
+	}
+
+	void draw(RenderWindow& window) {
+		window.draw(shape);
+	}
+
+	//move the paddle left
+	void moveLeft() {
+		PX -= Speed;
+		if (PX < 0) PX = 0; //keep paddle within bounds
+		shape.setPosition(PX, PY);
+	}
+
+	void moveRight() {
+		PX += Speed;
+		if (PX+100 > 800) PX = 700; //keep paddle within bounds
+		shape.setPosition(PX, PY);
+	}
+
+	float getX() {
+		return PX;
+	}
+
+	float getY() {
+		return PY;
+	}
+
+	float getW() {
+		return PW;
+	}
+
+	float getH() {
+		return PH;
+	}
+
+};
+
 class Ball {
 private:
 	float BX;
@@ -120,12 +180,25 @@ public:
 	bool brickCollision(Brick& brick) {
 		if (!brick.getDead() && //ensure the brick is not dead
 			BX + radius > brick.getX() &&
-			BX - radius < brick.getX() + 50 &&
+			BX - radius < brick.getX() + brick.getW() &&
 			BY + radius > brick.getY() &&
-			BY - radius < brick.getY() + 50) {
+			BY - radius < brick.getY() + brick.getH()) {
 			brick.killBrick();
 			cout << "killed yo birck" << endl;
 			yvel *= -1;
+			//reflect(); //reflect the ball vertically
+			return true;
+		}
+		return false;
+	}
+
+	bool paddleCollision(Paddle& paddle) {
+		if (BX + radius > paddle.getX() &&
+			BX - radius < paddle.getX() + paddle.getW() &&
+			BY + radius > paddle.getY() &&
+			BY - radius < paddle.getY() + paddle.getH()) {
+			yvel *= -1;
+			cout << "hit yo paddle" << endl;
 			//reflect(); //reflect the ball vertically
 			return true;
 		}
@@ -137,48 +210,6 @@ public:
 	}
 };
 
-class Paddle {
-private:
-	int PX;
-	int PY;
-	int PW;
-	int PH;
-	int Speed;
-	RectangleShape shape;
-
-public:
-	Paddle(float px, float py, float pw, float ph, float sp) {
-		PX = px;
-		PY = py;
-		PW = pw;
-		PH = ph;
-		Speed = sp;
-
-		//set up shape
-		shape.setSize(Vector2f(PW, PH));
-		shape.setPosition(PX, PY);
-		shape.setFillColor(Color::White);
-	}
-
-	void draw(RenderWindow& window) {
-		window.draw(shape);
-	}
-
-	//move the paddle left
-	void moveLeft() {
-		PX -= Speed;
-		if (PX < 0) PX = 0; //keep paddle within bounds
-		shape.setPosition(PX, PY);
-	}
-
-	void moveRight() {
-		PX += Speed;
-		if (PX+100 > 800) PX = 700; //keep paddle within bounds
-		shape.setPosition(PX, PY);
-	}
-
-};
-
 
 
 int main() {
@@ -186,9 +217,9 @@ int main() {
 
 	//instiantate game objects
 
-	Ball ball1( 200, 400, .8, 1, 10);
+	Ball ball1( 200, 400, .1, .1, 10);
 
-	Paddle paddle1(350, 700, 100, 20, 1);
+	Paddle paddle1(350, 700, 100, 20, .1);
 
 	Brick brick1(100, 100, 50, 20);
 	Brick brick2(160, 100, 50, 20);
@@ -247,9 +278,40 @@ int main() {
 
 		ball1.move(800, 800);
 
+		ball1.paddleCollision(paddle1);
+
 		ball1.brickCollision(brick1);
 		ball1.brickCollision(brick2);
 		ball1.brickCollision(brick3);
+		ball1.brickCollision(brick4);
+		ball1.brickCollision(brick5);
+		ball1.brickCollision(brick6);
+		ball1.brickCollision(brick7);
+		ball1.brickCollision(brick8);
+		ball1.brickCollision(brick9);
+		ball1.brickCollision(brick10);
+
+		ball1.brickCollision(brick11);
+		ball1.brickCollision(brick12);
+		ball1.brickCollision(brick13);
+		ball1.brickCollision(brick14);
+		ball1.brickCollision(brick15);
+		ball1.brickCollision(brick16);
+		ball1.brickCollision(brick17);
+		ball1.brickCollision(brick18);
+		ball1.brickCollision(brick19);
+		ball1.brickCollision(brick20);
+
+		ball1.brickCollision(brick21);
+		ball1.brickCollision(brick22);
+		ball1.brickCollision(brick23);
+		ball1.brickCollision(brick24);
+		ball1.brickCollision(brick25);
+		ball1.brickCollision(brick26);
+		ball1.brickCollision(brick27);
+		ball1.brickCollision(brick28);
+		ball1.brickCollision(brick29);
+		ball1.brickCollision(brick30);
 
 		window.clear(); //clrear screen
 
